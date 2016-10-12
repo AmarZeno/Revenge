@@ -20,17 +20,38 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 	
-	UPROPERTY(EditAnywhere)
+	/*holds the static mesh component*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* Battery_StaticMeshComponent;
 
-
-
-	UPROPERTY(EditAnywhere)
+	/*has the battery been collected*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool B_IsCollected;
-
-	UPROPERTY(EditAnywhere)
+	
+	/*the available charge in the battery*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float F_AvailableCharge;
 
+	/*When player collects the battery*/
+	void BatterCollected();
 	
-	
+	bool IsActive();
+
+	void SetActive(bool IsEnabled);
+
+	/*returns the charge in the battery*/
+	float f_getPower();	
+
+	void WasCollected();
+
+
+	void DestroyAfterDelay();
+	void UpdateBeamTargetPoint();
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ParticleSystemTemplate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Particles", Meta = (BlueprintProtected = "true"))
+	class UParticleSystemComponent* ParticleSystem;
+
 };
