@@ -67,3 +67,4 @@ DerivedDataCache/*
 .ctrlp_cache/
 
 *.db
+*.opendb
