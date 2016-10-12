@@ -2,6 +2,8 @@
 
 #include "Revenge.h"
 #include "RevengeCharacter.h"
+#include "DrawDebugHelpers.h"
+#include "Engine.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARevengeCharacter
@@ -48,6 +50,9 @@ void ARevengeCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 {
 	// Set up gameplay key bindings
 	check(InputComponent);
+
+	InputComponent->BindAction("Raycast", IE_Pressed, this, &ARevengeCharacter::PerformRaycast);
+
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
@@ -66,7 +71,6 @@ void ARevengeCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 	InputComponent->BindTouch(IE_Pressed, this, &ARevengeCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &ARevengeCharacter::TouchStopped);
 }
-
 
 void ARevengeCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -123,5 +127,61 @@ void ARevengeCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void ARevengeCharacter::PerformRaycast()
+{
+
+	/*
+	FVector mouseLocation, mouseDirection;
+
+	APlayerController* PlayerController = (APlayerController*)GetWorld()->GetFirstPlayerController();
+
+	PlayerController->DeprojectMousePositionToWorld(mouseLocation, mouseDirection);
+
+	FRotator currentCharacterRotation = this->GetActorRotation();
+	FRotator targetRotation = mouseDirection.Rotation();
+
+	FRotator newRotation = FRotator(currentCharacterRotation.Pitch, targetRotation.Yaw, currentCharacterRotation.Roll);
+	*/
+
+	APlayerController* PlayerController = (APlayerController*)GetWorld()->GetFirstPlayerController();
+
+	const ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+	FVector WorldLoc, WorldDir;
+	if (LocalPlayer && LocalPlayer->ViewportClient)
+	{
+		FViewport* Viewport = LocalPlayer->ViewportClient->Viewport;
+		if (Viewport)
+		{
+			FVector2D ViewportSize;
+			LocalPlayer->ViewportClient->GetViewportSize(ViewportSize);
+			const int32 X = static_cast<int32>(ViewportSize.X * 0.5f);
+			const int32 Y = static_cast<int32>(ViewportSize.Y * 0.5f);
+			PlayerController->DeprojectScreenPositionToWorld(X, Y, WorldLoc, WorldDir);
+		}
+	}
+
+
+	
+	//WorldDir.ForwardVector
+
+	//this->SetActorRotation(newRotation);
+	
+
+	FHitResult* HitResult = new FHitResult();
+	FVector StartTrace = this->GetActorLocation();
+
+	FVector ForwardVector = WorldDir;
+	//FVector ForwardVector = newRotation.Vector();
+
+	FVector EndTrace = ((ForwardVector * 2000.0f) + StartTrace);
+	FCollisionQueryParams* TraceParams = new FCollisionQueryParams();
+
+	if (GetWorld() -> LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams)) {
+		DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("HIT the targetr"), *HitResult->Actor->GetName()));
 	}
 }
