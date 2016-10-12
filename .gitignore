@@ -66,3 +66,4 @@ DerivedDataCache/*
 *.swo
 .ctrlp_cache/
 
+*.db
