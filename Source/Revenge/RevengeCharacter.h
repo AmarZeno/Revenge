@@ -71,6 +71,24 @@ public:
 
 	void PullBackAndRestart();
 
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	int CurrentLevel;
+
+	//see the EnemyCharacter.h docs for the position vectors
+	
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	FVector FirstLevelPosition;
+
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	FVector SecondLevelPosition;
+
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	FVector ThirdLevelPosition;
+
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	FVector FourthLevelPosition;
+
+	void returnFromKillZone();	//the player position gets restarted, when he falls into the killzone
 protected:
 
 	/** Called for forwards/backward input */

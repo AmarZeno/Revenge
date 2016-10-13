@@ -42,6 +42,10 @@ public:
 	TArray<AEnemyCharacter*> arrayToHoldThePlayer;
 
 	//3 vectors holding the position of the enemy once player reaches to it.
+
+	UPROPERTY(EditAnywhere)
+	FVector FirstLevelPosition;
+
 	UPROPERTY(EditAnywhere)
 	FVector SecondLevelPosition;
 
@@ -54,6 +58,8 @@ public:
 	/*maintains the current level*/
 	UPROPERTY(EditAnywhere)
 	int CurrentLevel;
+
+	
 
 
 };

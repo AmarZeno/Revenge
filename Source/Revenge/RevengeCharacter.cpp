@@ -64,6 +64,8 @@ ARevengeCharacter::ARevengeCharacter()
 	text_playerCounter->SetHorizontalAlignment(EHTA_Left);
 	text_playerCounter->SetWorldSize(100.0f);
 	text_playerCounter->SetupAttachment(RootComponent);
+
+	CurrentLevel = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -242,6 +244,7 @@ void ARevengeCharacter::Tick(float DeltaTime)
 	TimeLeft--;
 	UpdateTimerDisplay();
 	CollectBattery();
+	returnFromKillZone();
 
 }
 
@@ -253,13 +256,19 @@ void ARevengeCharacter::CollectBattery() {
 
 
 	for (int32 eachCollected = 0; eachCollected < CollectedActors.Num(); eachCollected++) {
-		AABattery* const TempBattery = Cast<AABattery>(CollectedActors[eachCollected]);
+		if (CollectedActors[eachCollected]->GetName() == "EnemyCharacter1" ||
+			CollectedActors[eachCollected]->GetName() == "EnemyCharacter_1") {
+			CurrentLevel += 1;
+		}
+		else {
+			AABattery* const TempBattery = Cast<AABattery>(CollectedActors[eachCollected]);
 
-		//if the cast is successfull
-		if (TempBattery) {
-			TempBattery->SetActive(false);
-			CollectedBatteries.Add(TempBattery);
-			TimeLeft = ResetTime;
+			//if the cast is successfull
+			if (TempBattery) {
+				TempBattery->SetActive(false);
+				CollectedBatteries.Add(TempBattery);
+				TimeLeft = ResetTime;
+			}
 		}
 	}
 
@@ -288,7 +297,16 @@ void ARevengeCharacter::UpdateTimerDisplay() {
 /*when timer hits 0, the player is pulled back to the starting position and the timer restarts*/
 void ARevengeCharacter::PullBackAndRestart() {
 	TimeLeft = ResetTime;
-	this->SetActorLocation(FVector(-40.0f, 10.0f,426.0f));
+	if (CurrentLevel == 1) {
+		this->SetActorLocation(FirstLevelPosition);
+	}
+	else if (CurrentLevel == 2) {
+		this->SetActorLocation(SecondLevelPosition);
+	}
+	else if (CurrentLevel == 3) {
+		this->SetActorLocation(ThirdLevelPosition);
+	}
+	
 
 	//regenerate the disabled actors
 	for (int32 eachCollected = 0; eachCollected < CollectedBatteries.Num(); eachCollected++) {
@@ -297,5 +315,20 @@ void ARevengeCharacter::PullBackAndRestart() {
 	}
 	
 	CollectedBatteries.Empty();
+}
 
+void ARevengeCharacter::returnFromKillZone() {
+	if (this->GetActorLocation().Z < -950.0f) {
+		if (CurrentLevel == 1) {
+			this->SetActorLocation(FirstLevelPosition);
+		}
+		else if (CurrentLevel == 2) {
+			this->SetActorLocation(SecondLevelPosition);
+		}
+		else if (CurrentLevel == 3) {
+			this->SetActorLocation(ThirdLevelPosition);
+		}
+
+		
+	}
 }
