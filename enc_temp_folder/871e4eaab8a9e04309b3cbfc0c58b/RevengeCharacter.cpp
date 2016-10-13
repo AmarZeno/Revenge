@@ -219,7 +219,7 @@ void ARevengeCharacter::PerformRaycast()
 	if (GetWorld() -> LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *TraceParams)) {
 		DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true);
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("HIT the target %s"), *HitResult->Actor->GetName()));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("HIT the targetr"), *HitResult->Actor->GetName()));
 
 		// Updating player location for the raycasted location
 		FVector Location = HitResult->Actor->GetActorLocation();
