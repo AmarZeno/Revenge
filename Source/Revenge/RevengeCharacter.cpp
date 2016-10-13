@@ -2,9 +2,12 @@
 
 #include "Revenge.h"
 #include "RevengeCharacter.h"
+#include "ABattery.h"
+
+
 #include "DrawDebugHelpers.h"
 #include "Engine.h"
-#include "ABattery.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // ARevengeCharacter
