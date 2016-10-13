@@ -28,6 +28,7 @@ AABattery::AABattery()
 	/*the battery has not been collected yet*/
 	B_IsCollected = false;
 	F_AvailableCharge = 150.0f;
+	B_IsAvailable = true;
 }
 
 // Called when the game starts or when spawned
@@ -67,16 +68,29 @@ bool AABattery::IsActive() {
 void AABattery::BatterCollected() {
 	FString DebugLogmessage = GetName();
 	UE_LOG(LogClass, Log, TEXT("Collected %s"), *DebugLogmessage);
-	Destroy();	//destroy the battery
+	//Destroy();	//destroy the battery
+	DisableActor();
 }
 
 
 void AABattery::SetActive(bool Enable) {
 	if (Enable == false) {
-		Destroy();
+		//Destroy();
+		DisableActor();
 		//Battery_StaticMeshComponent->SetActive(false);
 		//RootComponent->SetActive(false);
 	}
+}
+
+void AABattery::EnableActor() {
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+}
+
+void AABattery::DisableActor() {
+
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
 }
 /*
 void AABattery::WasCollected() {

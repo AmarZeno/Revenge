@@ -42,9 +42,12 @@ public:
 	/*returns the charge in the battery*/
 	float f_getPower();	
 
+	bool B_IsAvailable;
 
 	void DestroyAfterDelay();
 
+	void EnableActor();
+	void DisableActor();
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ParticleSystemTemplate;

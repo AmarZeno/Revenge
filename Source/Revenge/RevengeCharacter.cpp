@@ -56,8 +56,14 @@ ARevengeCharacter::ARevengeCharacter()
 	InitialPower = 2000.0f;
 	CharacterPower = InitialPower;
 
+	ResetTime = 1000.0f;
 	TimeLeft = ResetTime;
-	ResetTime = 1000.0f;	//time is reset to this value
+	//time is reset to this value
+
+	text_playerCounter = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextComponent"));
+	text_playerCounter->SetHorizontalAlignment(EHTA_Left);
+	text_playerCounter->SetWorldSize(100.0f);
+	text_playerCounter->SetupAttachment(RootComponent);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,7 +118,7 @@ void ARevengeCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Loca
 void ARevengeCharacter::TriggerEnter(AActor *, UPrimitiveComponent * otherComponent, int32 otherBodyIndex)
 {
 	otherComponent->SetActive(false);	
-	TArray<AActor*> CollectedActors;
+	//TArray<AActor*> CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
 
 	for (int32 eachCollected = 0; eachCollected < CollectedActors.Num(); eachCollected++) {
@@ -234,13 +240,14 @@ void ARevengeCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//keep decreasing the time
 	TimeLeft--;
-	
+	UpdateTimerDisplay();
 	CollectBattery();
 
 }
 
 void ARevengeCharacter::CollectBattery() {
-	TArray<AActor*> CollectedActors;
+	//TArray<AActor*> 
+		//CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
 
 
@@ -251,8 +258,13 @@ void ARevengeCharacter::CollectBattery() {
 		//if the cast is successfull
 		if (TempBattery) {
 			TempBattery->SetActive(false);
+			CollectedBatteries.Add(TempBattery);
 			TimeLeft = ResetTime;
 		}
+	}
+
+	if (TimeLeft < 0) {
+		PullBackAndRestart();
 	}
 }
 
@@ -266,4 +278,24 @@ float ARevengeCharacter::f_getCharacterPower() {
 
 float ARevengeCharacter::f_getTimeLeft() {
 	return TimeLeft;
+}
+
+/*sets the timer to the textBox i.e. the TextComponent*/
+void ARevengeCharacter::UpdateTimerDisplay() {
+	text_playerCounter->SetText(FString::FromInt(TimeLeft));
+}
+
+/*when timer hits 0, the player is pulled back to the starting position and the timer restarts*/
+void ARevengeCharacter::PullBackAndRestart() {
+	TimeLeft = ResetTime;
+	this->SetActorLocation(FVector(-40.0f, 10.0f,426.0f));
+
+	//regenerate the disabled actors
+	for (int32 eachCollected = 0; eachCollected < CollectedBatteries.Num(); eachCollected++) {
+		
+		CollectedBatteries[eachCollected]->EnableActor();
+	}
+	
+	CollectedBatteries.Empty();
+
 }
