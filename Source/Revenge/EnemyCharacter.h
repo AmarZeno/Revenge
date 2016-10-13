@@ -32,4 +32,28 @@ public:
 	UPROPERTY(EditAnywhere)
 	FVector F_Position;
 
+	/*used to detect collision with the player*/
+	UPROPERTY(EditAnywhere)
+	USphereComponent* CollectionPlayer;
+
+	void DetectCollisionWithPlayer();
+
+	TArray<AActor*> nonCastedArray;
+	TArray<AEnemyCharacter*> arrayToHoldThePlayer;
+
+	//3 vectors holding the position of the enemy once player reaches to it.
+	UPROPERTY(EditAnywhere)
+	FVector SecondLevelPosition;
+
+	UPROPERTY(EditAnywhere)
+	FVector ThirdLevelPosition;
+
+	UPROPERTY(EditAnywhere)
+	FVector FourthLevelPosition;
+
+	/*maintains the current level*/
+	UPROPERTY(EditAnywhere)
+	int CurrentLevel;
+
+
 };
