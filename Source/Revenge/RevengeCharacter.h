@@ -1,7 +1,10 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
+
+
 #include "GameFramework/Character.h"
 #include "RevengeCharacter.generated.h"
+
 
 UCLASS(config=Game)
 class ARevengeCharacter : public ACharacter
@@ -18,6 +21,8 @@ class ARevengeCharacter : public ACharacter
 public:
 	ARevengeCharacter();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -25,6 +30,44 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	//---------------------CUSTOM CODE------------------------------------------
+
+	/*batteries within the sphere will get consumed*/
+	UPROPERTY(EditAnywhere)
+	USphereComponent* CollectionSphere;
+
+	/*called when the player collects the battery*/
+	void CollectBattery();
+
+	/*starting charge of character*/
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	float InitialPower;
+
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	float CharacterPower;
+
+	/*indicates the current time left for the player in order to get a charge*/
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	float TimeLeft;
+
+	/*player time is reset to this value*/
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	float ResetTime;
+
+	
+
+	//getters
+	float f_getInitialPower();
+
+	float f_getCharacterPower();
+
+	float f_getTimeLeft();
+
+	
+
+	
+
 
 protected:
 
@@ -51,6 +94,8 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+
+	void TriggerEnter(class AActor*, class UPrimitiveComponent* otherComponent, int32 otherBodyIndex);
 
 protected:
 	// APawn interface

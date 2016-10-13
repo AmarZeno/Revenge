@@ -4,6 +4,7 @@
 #include "RevengeCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "Engine.h"
+#include "ABattery.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARevengeCharacter
@@ -41,6 +42,19 @@ ARevengeCharacter::ARevengeCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+
+	//create the collection sphere
+	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionTrigger"));
+	CollectionSphere->SetupAttachment(RootComponent);
+	CollectionSphere->SetSphereRadius(200.0f);
+	
+	//set the character power charge
+	InitialPower = 2000.0f;
+	CharacterPower = InitialPower;
+
+	TimeLeft = ResetTime;
+	ResetTime = 1000.0f;	//time is reset to this value
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,6 +62,7 @@ ARevengeCharacter::ARevengeCharacter()
 
 void ARevengeCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
+	
 	// Set up gameplay key bindings
 	check(InputComponent);
 
@@ -58,6 +73,8 @@ void ARevengeCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 
 	InputComponent->BindAxis("MoveForward", this, &ARevengeCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ARevengeCharacter::MoveRight);
+
+	InputComponent->BindAction("CollectBattery", IE_Pressed, this, &ARevengeCharacter::CollectBattery);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -86,6 +103,23 @@ void ARevengeCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Loca
 	if (FingerIndex == ETouchIndex::Touch1)
 	{
 		StopJumping();
+	}
+}
+
+void ARevengeCharacter::TriggerEnter(AActor *, UPrimitiveComponent * otherComponent, int32 otherBodyIndex)
+{
+	otherComponent->SetActive(false);	
+	TArray<AActor*> CollectedActors;
+	CollectionSphere->GetOverlappingActors(CollectedActors);
+
+	for (int32 eachCollected = 0; eachCollected < CollectedActors.Num(); eachCollected++) {
+		AABattery* const TempBattery = Cast<AABattery>(CollectedActors[eachCollected]);
+
+		//if the cast is successfull
+		if (TempBattery) {
+			TempBattery->SetActive(false);
+			TimeLeft = ResetTime;	//reset the time of the player
+		}
 	}
 }
 
@@ -184,4 +218,44 @@ void ARevengeCharacter::PerformRaycast()
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("HIT the targetr"), *HitResult->Actor->GetName()));
 	}
+}
+
+void ARevengeCharacter::Tick(float DeltaTime)
+{
+
+	Super::Tick(DeltaTime);
+	//keep decreasing the time
+	TimeLeft--;
+	
+	CollectBattery();
+
+}
+
+void ARevengeCharacter::CollectBattery() {
+	TArray<AActor*> CollectedActors;
+	CollectionSphere->GetOverlappingActors(CollectedActors);
+
+
+
+	for (int32 eachCollected = 0; eachCollected < CollectedActors.Num(); eachCollected++) {
+		AABattery* const TempBattery = Cast<AABattery>(CollectedActors[eachCollected]);
+
+		//if the cast is successfull
+		if (TempBattery) {
+			TempBattery->SetActive(false);
+			TimeLeft = ResetTime;
+		}
+	}
+}
+
+float ARevengeCharacter::f_getInitialPower() {
+	return InitialPower;
+}
+
+float ARevengeCharacter::f_getCharacterPower() {
+	return CharacterPower;
+}
+
+float ARevengeCharacter::f_getTimeLeft() {
+	return TimeLeft;
 }
