@@ -42,11 +42,9 @@ public:
 	/*returns the charge in the battery*/
 	float f_getPower();	
 
-	void WasCollected();
-
 
 	void DestroyAfterDelay();
-	void UpdateBeamTargetPoint();
+
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* ParticleSystemTemplate;

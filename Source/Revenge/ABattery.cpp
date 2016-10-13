@@ -14,16 +14,16 @@ AABattery::AABattery()
 	Battery_StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BATTERY_STATIC_MESH"));
 	RootComponent = Battery_StaticMeshComponent;
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> Template
-	(TEXT("ParticleSystem'/Revenge/Content/StarterContent/Particles/P_Sparks'"));
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> Template
+	//(TEXT("ParticleSystem'/Revenge/Content/StarterContent/Particles/P_Sparks'"));
 
-	if (Template.Succeeded()) {
+	/*if (Template.Succeeded()) {
 		ParticleSystemTemplate = Template.Object;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("'P_electricity_arc' not found"));
-	}
+	}*/
 	
 	/*the battery has not been collected yet*/
 	B_IsCollected = false;
@@ -47,7 +47,7 @@ void AABattery::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	//ParticleSystem = UGameplayStatics::SpawnEmitterAttached(ParticleSystemTemplate, Cast<USceneComponent>(FindComponentByClass(UStaticMeshComponent::StaticClass())), NAME_None);
-	UpdateBeamTargetPoint();
+//	UpdateBeamTargetPoint();
 
 	/*
 	FTimerHandle UnusedHandle;
@@ -78,22 +78,21 @@ void AABattery::SetActive(bool Enable) {
 		//RootComponent->SetActive(false);
 	}
 }
-
+/*
 void AABattery::WasCollected() {
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(
 		UnusedHandle, this, &AABattery::DestroyAfterDelay, 10, false);
 }
-
+/*
 void AABattery::UpdateBeamTargetPoint()
 {
 	ACharacter* Character = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	FVector SocketLocation = Character->GetMesh()->GetSocketLocation("spine_02");
 	ParticleSystem->SetBeamTargetPoint(0, SocketLocation, 0);
 }
-
+*/
 void AABattery::DestroyAfterDelay() {
-	// Destruimos el objeto
 	Destroy();
 }
 
