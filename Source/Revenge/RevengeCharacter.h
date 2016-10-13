@@ -1,7 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
-
+#include"ABattery.h"
 #include "GameFramework/Character.h"
 #include "RevengeCharacter.generated.h"
 
@@ -55,6 +55,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
 	float ResetTime;
 
+	UPROPERTY(EditAnywhere, Category = AAAAAAAAAA)
+	class UTextRenderComponent* text_playerCounter;
 	
 
 	//getters
@@ -64,10 +66,10 @@ public:
 
 	float f_getTimeLeft();
 
-	
 
-	
+	void UpdateTimerDisplay();
 
+	void PullBackAndRestart();
 
 protected:
 
@@ -104,6 +106,8 @@ protected:
 
 private:
 	void PerformRaycast();
+	TArray<AActor*> CollectedActors;
+	TArray<AABattery*> CollectedBatteries;
 
 public:
 	/** Returns CameraBoom subobject **/
